@@ -1,65 +1,63 @@
-<!-- ======================================================================== -->
-<!-- DERIV DBOT  —  QuantEdge-Deriv-Bot -->
-<!-- ------------------------------------------------------------------------ -->
-<!-- Symbol            : R_100  (Volatility 100 Index) -->
-<!-- Contract          : Rise / Fall  (CALL / PUT) -->
-<!-- Duration          : 5 t   |  Candle interval: 60s -->
-<!-- Strategy          : EMA(9/21) trend  +  RSI(14)  +  momentum gate -->
-<!-- Entry (RISE)      : EMAfast>EMAslow AND RSI<70 AND RSI>50 AND momentum>filter -->
-<!-- Entry (FALL)      : EMAfast<EMAslow AND RSI>30 AND RSI<50 AND momentum<-filter -->
-<!-- Martingale        : x1.6 after loss, max 4 steps, reset on win -->
-<!-- Take-profit       : 20    Stop-loss: 30    Max trades: 40 -->
-<!-- Risk rule         : ~1% of 200 capital per base trade -->
-<!-- ------------------------------------------------------------------------ -->
-<!-- Import            : Deriv  →  DBot  →  Import  →  select this .xml file -->
-<!-- DISCLAIMER        : Educational tool. Trading carries risk of loss. -->
-<!--                     No strategy guarantees profit. Test on a DEMO account first. -->
-<!-- ======================================================================== -->
+<!-- ================================================================== -->
+<!-- DERIV DBOT  ·  QuantEdge-Deriv-Bot -->
+<!-- Symbol        : R_100 (Volatility 100 Index) -->
+<!-- Contract      : Rise / Fall (CALL / PUT) -->
+<!-- Duration      : 5 t   |   Candle interval: 60s -->
+<!-- Strategy      : EMA(9/21) trend + RSI(14) + momentum gate -->
+<!-- Entry RISE    : EMAfast above EMAslow AND RSI below 70 AND RSI above 50 AND momentum strong -->
+<!-- Entry FALL    : EMAfast below EMAslow AND RSI above 30 AND RSI below 50 AND momentum strong -->
+<!-- Martingale    : x1.6 after loss, max 4 steps, reset on win -->
+<!-- Caps          : Take profit 20 | Stop loss 30 | Max trades 40 -->
+<!-- Risk rule     : about 1% of 200 capital per base trade -->
+<!-- Import        : Deriv  DBot  Import  then select this .xml file -->
+<!-- DISCLAIMER    : Educational tool. Trading carries risk of loss. -->
+<!--                 No strategy guarantees profit. Test on a DEMO account first. -->
+<!-- ================================================================== -->
 <xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
   <variables>
-    <variable id="v8_ul4ozu">Base Stake</variable>
-    <variable id="vb_clkhds">Stake</variable>
-    <variable id="ve_dzqh1o">Martingale Multiplier</variable>
-    <variable id="vh_n5quv9">Max Martingale Steps</variable>
-    <variable id="vk_ciac5f">Loss Streak</variable>
-    <variable id="vn_lh4p77">Take Profit</variable>
-    <variable id="vq_64wm1l">Stop Loss</variable>
-    <variable id="vt_0fd77n">Total Profit</variable>
-    <variable id="vw_pfv7eu">Total Trades</variable>
-    <variable id="vz_1oiqh2">Max Trades</variable>
-    <variable id="v12_9s09cr">Trading Enabled</variable>
-    <variable id="v1a_8v1ec3">EMA Fast</variable>
-    <variable id="v1c_xgn3l8">EMA Slow</variable>
-    <variable id="v1j_gybqhw">RSI</variable>
-    <variable id="v1q_dbffxl">Momentum</variable>
+    <variable id="v8_s3mgsa">Base Stake</variable>
+    <variable id="vb_go5h8j">Stake</variable>
+    <variable id="ve_o13sa6">Martingale Multiplier</variable>
+    <variable id="vh_n0pkze">Max Martingale Steps</variable>
+    <variable id="vk_65xill">Loss Streak</variable>
+    <variable id="vn_4ya3ia">Take Profit</variable>
+    <variable id="vq_he1sz9">Stop Loss</variable>
+    <variable id="vt_f1ayz9">Total Profit</variable>
+    <variable id="vw_9t3r5n">Total Trades</variable>
+    <variable id="vz_r1n6pj">Max Trades</variable>
+    <variable id="v12_s5fyiv">Trading Enabled</variable>
+    <variable id="v1a_yney9e">EMA Fast</variable>
+    <variable id="v1c_dv1nde">EMA Slow</variable>
+    <variable id="v1j_i4auvb">RSI</variable>
+    <variable id="v1q_4dkchx">Momentum</variable>
   </variables>
-  <block type="trade_definition" id="root19_4jsq5o" deletable="false" x="0" y="0">
+  <block type="trade_definition" id="root19_atpiwc" deletable="false" x="0" y="0">
     <comment pinned="false" h="100" w="300">CONFIGURATION BLOCK — QuantEdge-Deriv-Bot.
 Strategy: EMA(9/21) trend filter + RSI(14) confirmation + EMA-separation momentum/volatility gate. Controlled martingale (x1.6, cap 4). Risk caps: TP 20, SL 30, max 40 trades.</comment>
     <statement name="TRADE_OPTIONS">
-      <block type="trade_definition_market" id="b1_jf2xqb" deletable="false" movable="false">
+      <block type="trade_definition_market" id="b1_dargcy" deletable="false" movable="false">
         <comment pinned="false" h="100" w="300">MARKET — synthetic_index / random_index / R_100 (Volatility 100 Index).
 Deriv WebSocket streams ticks + candles for this symbol in real time.</comment>
         <field name="MARKET_LIST">synthetic_index</field>
         <field name="SUBMARKET_LIST">random_index</field>
         <field name="SYMBOL_LIST">R_100</field>
         <next>
-          <block type="trade_definition_tradetype" id="b2_chfar4" deletable="false" movable="false">
+          <block type="trade_definition_tradetype" id="b2_bglurg" deletable="false" movable="false">
             <field name="TRADETYPECAT_LIST">callput</field>
             <field name="TRADETYPE_LIST">callput</field>
             <next>
-              <block type="trade_definition_contracttype" id="b3_kw1vc5" deletable="false" movable="false">
+              <block type="trade_definition_contracttype" id="b3_3x29fs" deletable="false" movable="false">
                 <comment pinned="false" h="100" w="300">Rise/Fall: the bot may buy a CALL (rise) or a PUT (fall) depending on signals.</comment>
                 <field name="TYPE_LIST">both</field>
                 <next>
-                  <block type="trade_definition_candleinterval" id="b4_1j7jpn" deletable="false" movable="false">
+                  <block type="trade_definition_candleinterval" id="b4_1jw81w" deletable="false" movable="false">
                     <comment pinned="false" h="100" w="300">Candle interval (seconds) used by the EMA / RSI indicator blocks.</comment>
                     <field name="CANDLEINTERVAL_LIST">60</field>
                     <next>
-                      <block type="trade_definition_restartbuysell" id="b5_o8pofu" deletable="false" movable="false">
+                      <block type="trade_definition_restartbuysell" id="b5_taygos" deletable="false" movable="false">
                         <field name="TIME_MACHINE_ENABLED">TRUE</field>
                         <next>
-                          <block type="trade_definition_restartonerror" id="b6_zpfsn0" deletable="false" movable="false">
+                          <block type="trade_definition_restartonerror" id="b6_zellrz" deletable="false" movable="false">
                             <comment pinned="false" h="100" w="300">If a proposal/buy API call errors, the bot recovers and continues (stability).</comment>
                             <field name="RESTARTONERROR">TRUE</field>
                           </block>
@@ -75,99 +73,99 @@ Deriv WebSocket streams ticks + candles for this symbol in real time.</comment>
       </block>
     </statement>
     <statement name="INITIALIZATION">
-      <block type="variables_set" id="b9_imr40g">
-        <field name="VAR" id="v8_ul4ozu">Base Stake</field>
+      <block type="variables_set" id="b9_he60gi">
+        <field name="VAR" id="v8_s3mgsa">Base Stake</field>
         <value name="VALUE">
-          <block type="math_number" id="b7_1zyz97">
+          <block type="math_number" id="b7_wpzorf">
             <field name="NUM">1</field>
           </block>
         </value>
         <next>
-          <block type="variables_set" id="bc_aslhsr">
-            <field name="VAR" id="vb_clkhds">Stake</field>
+          <block type="variables_set" id="bc_h4k7l4">
+            <field name="VAR" id="vb_go5h8j">Stake</field>
             <value name="VALUE">
-              <block type="math_number" id="ba_xcrac4">
+              <block type="math_number" id="ba_aqletd">
                 <field name="NUM">1</field>
               </block>
             </value>
             <next>
-              <block type="variables_set" id="bf_jybgbz">
-                <field name="VAR" id="ve_dzqh1o">Martingale Multiplier</field>
+              <block type="variables_set" id="bf_vmsviq">
+                <field name="VAR" id="ve_o13sa6">Martingale Multiplier</field>
                 <value name="VALUE">
-                  <block type="math_number" id="bd_2huk24">
+                  <block type="math_number" id="bd_fu4qw3">
                     <field name="NUM">1.6</field>
                   </block>
                 </value>
                 <next>
-                  <block type="variables_set" id="bi_wymyh8">
-                    <field name="VAR" id="vh_n5quv9">Max Martingale Steps</field>
+                  <block type="variables_set" id="bi_0zs7gf">
+                    <field name="VAR" id="vh_n0pkze">Max Martingale Steps</field>
                     <value name="VALUE">
-                      <block type="math_number" id="bg_erwz9n">
+                      <block type="math_number" id="bg_bh7bd8">
                         <field name="NUM">4</field>
                       </block>
                     </value>
                     <next>
-                      <block type="variables_set" id="bl_5usp76">
-                        <field name="VAR" id="vk_ciac5f">Loss Streak</field>
+                      <block type="variables_set" id="bl_9ba8rr">
+                        <field name="VAR" id="vk_65xill">Loss Streak</field>
                         <value name="VALUE">
-                          <block type="math_number" id="bj_17ner9">
+                          <block type="math_number" id="bj_6oilbm">
                             <field name="NUM">0</field>
                           </block>
                         </value>
                         <next>
-                          <block type="variables_set" id="bo_mtdq4f">
-                            <field name="VAR" id="vn_lh4p77">Take Profit</field>
+                          <block type="variables_set" id="bo_4jhgjy">
+                            <field name="VAR" id="vn_4ya3ia">Take Profit</field>
                             <value name="VALUE">
-                              <block type="math_number" id="bm_fdlq5s">
+                              <block type="math_number" id="bm_tl4ma4">
                                 <field name="NUM">20</field>
                               </block>
                             </value>
                             <next>
-                              <block type="variables_set" id="br_bjixd1">
-                                <field name="VAR" id="vq_64wm1l">Stop Loss</field>
+                              <block type="variables_set" id="br_eeukvf">
+                                <field name="VAR" id="vq_he1sz9">Stop Loss</field>
                                 <value name="VALUE">
-                                  <block type="math_number" id="bp_hdom3d">
+                                  <block type="math_number" id="bp_svzudn">
                                     <field name="NUM">30</field>
                                   </block>
                                 </value>
                                 <next>
-                                  <block type="variables_set" id="bu_xasi0e">
-                                    <field name="VAR" id="vt_0fd77n">Total Profit</field>
+                                  <block type="variables_set" id="bu_88ubv8">
+                                    <field name="VAR" id="vt_f1ayz9">Total Profit</field>
                                     <value name="VALUE">
-                                      <block type="math_number" id="bs_kho460">
+                                      <block type="math_number" id="bs_ig0sxt">
                                         <field name="NUM">0</field>
                                       </block>
                                     </value>
                                     <next>
-                                      <block type="variables_set" id="bx_s4mx39">
-                                        <field name="VAR" id="vw_pfv7eu">Total Trades</field>
+                                      <block type="variables_set" id="bx_67drjn">
+                                        <field name="VAR" id="vw_9t3r5n">Total Trades</field>
                                         <value name="VALUE">
-                                          <block type="math_number" id="bv_b9kdwl">
+                                          <block type="math_number" id="bv_g3cjts">
                                             <field name="NUM">0</field>
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="b10_w458ri">
-                                            <field name="VAR" id="vz_1oiqh2">Max Trades</field>
+                                          <block type="variables_set" id="b10_ka0gc8">
+                                            <field name="VAR" id="vz_r1n6pj">Max Trades</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="by_4grj73">
+                                              <block type="math_number" id="by_dwvx28">
                                                 <field name="NUM">40</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="b13_fofwws">
-                                                <field name="VAR" id="v12_9s09cr">Trading Enabled</field>
+                                              <block type="variables_set" id="b13_3e4w5m">
+                                                <field name="VAR" id="v12_s5fyiv">Trading Enabled</field>
                                                 <value name="VALUE">
-                                                  <block type="logic_boolean" id="b11_32e04a">
+                                                  <block type="logic_boolean" id="b11_jwcigg">
                                                     <field name="BOOL">TRUE</field>
                                                   </block>
                                                 </value>
                                                 <next>
-                                                  <block type="notify" id="b15_v8k02r">
+                                                  <block type="notify" id="b15_yob1ul">
                                                     <field name="NOTIFICATION_TYPE">info</field>
                                                     <field name="NOTIFICATION_SOUND">silent</field>
                                                     <value name="MESSAGE">
-                                                      <block type="text" id="b14_raqytg">
+                                                      <block type="text" id="b14_8aostw">
                                                         <field name="TEXT">Bot started • Volatility 100 Index • EMA 9/21 • RSI 14 • stake 1 • martingale x1.6 (max 4)</field>
                                                       </block>
                                                     </value>
@@ -196,172 +194,172 @@ Deriv WebSocket streams ticks + candles for this symbol in real time.</comment>
       </block>
     </statement>
     <statement name="SUBMARKET">
-      <block type="trade_definition_tradeoptions" id="b18_p2vtal">
+      <block type="trade_definition_tradeoptions" id="b18_vh84d2">
         <comment pinned="false" h="100" w="300">Duration 5 t. Amount = Stake (raised by martingale after losses).</comment>
         <mutation has_first_barrier="false" has_second_barrier="false" has_prediction="false" />
         <field name="DURATIONTYPE_LIST">t</field>
         <value name="DURATION">
-          <block type="math_number" id="b16_n2tdx6">
+          <block type="math_number" id="b16_j9g9p5">
             <field name="NUM">5</field>
           </block>
         </value>
         <value name="AMOUNT">
-          <block type="variables_get" id="b17_yxte1g">
-            <field name="VAR" id="vb_clkhds">Stake</field>
+          <block type="variables_get" id="b17_tmwvab">
+            <field name="VAR" id="vb_go5h8j">Stake</field>
           </block>
         </value>
       </block>
     </statement>
   </block>
-  <block type="before_purchase" id="b2w_aznwvb" deletable="false" x="0" y="1500">
+  <block type="before_purchase" id="b2w_v60jh8" deletable="false" x="0" y="1500">
     <comment pinned="false" h="100" w="300">ENTRY LOGIC — analysed every tick (real-time WebSocket data).
-BUYS RISE only when: trend bullish AND RSI not overbought AND RSI&gt;50 AND momentum strong.
-BUYS FALL only when: trend bearish AND RSI not oversold AND RSI&lt;50 AND momentum strong.
-No signal = no trade (waits for full confluence — no random/emotional entries).</comment>
+BUYS RISE only when: trend bullish AND RSI not overbought AND RSI above 50 AND momentum strong.
+BUYS FALL only when: trend bearish AND RSI not oversold AND RSI below 50 AND momentum strong.
+No signal equals no trade (waits for full confluence — no random or emotional entries).</comment>
     <statement name="BEFOREPURCHASE_STACK">
-      <block type="variables_set" id="b2g_qqut1g">
-        <field name="VAR" id="v1a_8v1ec3">EMA Fast</field>
+      <block type="variables_set" id="b2g_pp0iwu">
+        <field name="VAR" id="v1a_yney9e">EMA Fast</field>
         <value name="VALUE">
-          <block type="ema" id="b2f_vjz7az">
+          <block type="ema" id="b2f_uum3o9">
             <value name="INPUT">
-              <block type="ohlc_values" id="b2d_bv8evj">
+              <block type="ohlc_values" id="b2d_intmr8">
                 <field name="OHLCFIELD_LIST">close</field>
               </block>
             </value>
             <value name="PERIOD">
-              <block type="math_number" id="b2e_cueksm">
+              <block type="math_number" id="b2e_363fo5">
                 <field name="NUM">9</field>
               </block>
             </value>
           </block>
         </value>
         <next>
-          <block type="variables_set" id="b2k_j2sblq">
-            <field name="VAR" id="v1c_xgn3l8">EMA Slow</field>
+          <block type="variables_set" id="b2k_5xko2t">
+            <field name="VAR" id="v1c_dv1nde">EMA Slow</field>
             <value name="VALUE">
-              <block type="ema" id="b2j_qsy4wa">
+              <block type="ema" id="b2j_d1eudu">
                 <value name="INPUT">
-                  <block type="ohlc_values" id="b2h_0jqujb">
+                  <block type="ohlc_values" id="b2h_fvhj4l">
                     <field name="OHLCFIELD_LIST">close</field>
                   </block>
                 </value>
                 <value name="PERIOD">
-                  <block type="math_number" id="b2i_oc975j">
+                  <block type="math_number" id="b2i_naex61">
                     <field name="NUM">21</field>
                   </block>
                 </value>
               </block>
             </value>
             <next>
-              <block type="variables_set" id="b2o_zbk21x">
-                <field name="VAR" id="v1j_gybqhw">RSI</field>
+              <block type="variables_set" id="b2o_chaik1">
+                <field name="VAR" id="v1j_i4auvb">RSI</field>
                 <value name="VALUE">
-                  <block type="rsi" id="b2n_7ovafu">
+                  <block type="rsi" id="b2n_rzcyx7">
                     <value name="INPUT">
-                      <block type="ohlc_values" id="b2l_2tablf">
+                      <block type="ohlc_values" id="b2l_inn4kt">
                         <field name="OHLCFIELD_LIST">close</field>
                       </block>
                     </value>
                     <value name="PERIOD">
-                      <block type="math_number" id="b2m_mnttxv">
+                      <block type="math_number" id="b2m_ha0jzr">
                         <field name="NUM">14</field>
                       </block>
                     </value>
                   </block>
                 </value>
                 <next>
-                  <block type="variables_set" id="b2s_d9l89x">
-                    <field name="VAR" id="v1q_dbffxl">Momentum</field>
+                  <block type="variables_set" id="b2s_7dlcbj">
+                    <field name="VAR" id="v1q_4dkchx">Momentum</field>
                     <value name="VALUE">
-                      <block type="math_arithmetic" id="b2r_ptl3vy">
+                      <block type="math_arithmetic" id="b2r_feytma">
                         <field name="OP">MINUS</field>
                         <value name="A">
-                          <block type="variables_get" id="b2p_zuvfr6">
-                            <field name="VAR" id="v1a_8v1ec3">EMA Fast</field>
+                          <block type="variables_get" id="b2p_8luo31">
+                            <field name="VAR" id="v1a_yney9e">EMA Fast</field>
                           </block>
                         </value>
                         <value name="B">
-                          <block type="variables_get" id="b2q_4rkirn">
-                            <field name="VAR" id="v1c_xgn3l8">EMA Slow</field>
+                          <block type="variables_get" id="b2q_p3g151">
+                            <field name="VAR" id="v1c_dv1nde">EMA Slow</field>
                           </block>
                         </value>
                       </block>
                     </value>
                     <next>
-                      <block type="controls_if" id="b2v_3f6ptz">
+                      <block type="controls_if" id="b2v_gh6ri2">
                         <mutation elseif="1" else="0" />
                         <value name="IF0">
-                          <block type="logic_operation" id="b1x_bm01wr">
+                          <block type="logic_operation" id="b1x_0it49u">
                             <field name="OP">AND</field>
                             <value name="A">
-                              <block type="variables_get" id="b1i_lgdn0t">
-                                <field name="VAR" id="v12_9s09cr">Trading Enabled</field>
+                              <block type="variables_get" id="b1i_r15jaw">
+                                <field name="VAR" id="v12_s5fyiv">Trading Enabled</field>
                               </block>
                             </value>
                             <value name="B">
-                              <block type="logic_operation" id="b1w_ei7qo3">
+                              <block type="logic_operation" id="b1w_e87egu">
                                 <field name="OP">AND</field>
                                 <value name="A">
-                                  <block type="logic_compare" id="b1e_tupalp">
+                                  <block type="logic_compare" id="b1e_1ueaf8">
                                     <field name="OP">GT</field>
                                     <value name="A">
-                                      <block type="variables_get" id="b1b_pgprdb">
-                                        <field name="VAR" id="v1a_8v1ec3">EMA Fast</field>
+                                      <block type="variables_get" id="b1b_u1jnwc">
+                                        <field name="VAR" id="v1a_yney9e">EMA Fast</field>
                                       </block>
                                     </value>
                                     <value name="B">
-                                      <block type="variables_get" id="b1d_3itx9m">
-                                        <field name="VAR" id="v1c_xgn3l8">EMA Slow</field>
+                                      <block type="variables_get" id="b1d_psvg14">
+                                        <field name="VAR" id="v1c_dv1nde">EMA Slow</field>
                                       </block>
                                     </value>
                                   </block>
                                 </value>
                                 <value name="B">
-                                  <block type="logic_operation" id="b1v_qdxrn5">
+                                  <block type="logic_operation" id="b1v_rhm064">
                                     <field name="OP">AND</field>
                                     <value name="A">
-                                      <block type="logic_compare" id="b1m_l9jmw5">
+                                      <block type="logic_compare" id="b1m_4ikdor">
                                         <field name="OP">LT</field>
                                         <value name="A">
-                                          <block type="variables_get" id="b1k_96jkot">
-                                            <field name="VAR" id="v1j_gybqhw">RSI</field>
+                                          <block type="variables_get" id="b1k_s1dx1i">
+                                            <field name="VAR" id="v1j_i4auvb">RSI</field>
                                           </block>
                                         </value>
                                         <value name="B">
-                                          <block type="math_number" id="b1l_q7kfg7">
+                                          <block type="math_number" id="b1l_kx3g2m">
                                             <field name="NUM">70</field>
                                           </block>
                                         </value>
                                       </block>
                                     </value>
                                     <value name="B">
-                                      <block type="logic_operation" id="b1u_60n9of">
+                                      <block type="logic_operation" id="b1u_204hhw">
                                         <field name="OP">AND</field>
                                         <value name="A">
-                                          <block type="logic_compare" id="b1p_bqudqg">
+                                          <block type="logic_compare" id="b1p_rd9w16">
                                             <field name="OP">GT</field>
                                             <value name="A">
-                                              <block type="variables_get" id="b1n_kg3o4k">
-                                                <field name="VAR" id="v1j_gybqhw">RSI</field>
+                                              <block type="variables_get" id="b1n_bujszl">
+                                                <field name="VAR" id="v1j_i4auvb">RSI</field>
                                               </block>
                                             </value>
                                             <value name="B">
-                                              <block type="math_number" id="b1o_mugd4v">
+                                              <block type="math_number" id="b1o_8de1yg">
                                                 <field name="NUM">50</field>
                                               </block>
                                             </value>
                                           </block>
                                         </value>
                                         <value name="B">
-                                          <block type="logic_compare" id="b1t_xvjn0g">
+                                          <block type="logic_compare" id="b1t_wl1j80">
                                             <field name="OP">GT</field>
                                             <value name="A">
-                                              <block type="variables_get" id="b1r_jgl882">
-                                                <field name="VAR" id="v1q_dbffxl">Momentum</field>
+                                              <block type="variables_get" id="b1r_rlmypk">
+                                                <field name="VAR" id="v1q_4dkchx">Momentum</field>
                                               </block>
                                             </value>
                                             <value name="B">
-                                              <block type="math_number" id="b1s_rvg65e">
+                                              <block type="math_number" id="b1s_frwkri">
                                                 <field name="NUM">0</field>
                                               </block>
                                             </value>
@@ -376,85 +374,85 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                           </block>
                         </value>
                         <statement name="DO0">
-                          <block type="purchase" id="b2t_turbxu">
+                          <block type="purchase" id="b2t_d6m30v">
                             <field name="PURCHASE_LIST">CALL</field>
                           </block>
                         </statement>
                         <value name="ELSEIF1">
-                          <block type="logic_operation" id="b2c_56bovc">
+                          <block type="logic_operation" id="b2c_0wa7ac">
                             <field name="OP">AND</field>
                             <value name="A">
-                              <block type="variables_get" id="b1y_yc8znk">
-                                <field name="VAR" id="v12_9s09cr">Trading Enabled</field>
+                              <block type="variables_get" id="b1y_e4fj1o">
+                                <field name="VAR" id="v12_s5fyiv">Trading Enabled</field>
                               </block>
                             </value>
                             <value name="B">
-                              <block type="logic_operation" id="b2b_p4ar72">
+                              <block type="logic_operation" id="b2b_sqg2z1">
                                 <field name="OP">AND</field>
                                 <value name="A">
-                                  <block type="logic_compare" id="b1h_zd5nlh">
+                                  <block type="logic_compare" id="b1h_bzdrhu">
                                     <field name="OP">LT</field>
                                     <value name="A">
-                                      <block type="variables_get" id="b1f_al76bl">
-                                        <field name="VAR" id="v1a_8v1ec3">EMA Fast</field>
+                                      <block type="variables_get" id="b1f_4z22ov">
+                                        <field name="VAR" id="v1a_yney9e">EMA Fast</field>
                                       </block>
                                     </value>
                                     <value name="B">
-                                      <block type="variables_get" id="b1g_7k6e77">
-                                        <field name="VAR" id="v1c_xgn3l8">EMA Slow</field>
+                                      <block type="variables_get" id="b1g_sx27or">
+                                        <field name="VAR" id="v1c_dv1nde">EMA Slow</field>
                                       </block>
                                     </value>
                                   </block>
                                 </value>
                                 <value name="B">
-                                  <block type="logic_operation" id="b2a_031b9q">
+                                  <block type="logic_operation" id="b2a_a7kfaw">
                                     <field name="OP">AND</field>
                                     <value name="A">
-                                      <block type="logic_compare" id="b21_qj5pmx">
+                                      <block type="logic_compare" id="b21_9pk3me">
                                         <field name="OP">GT</field>
                                         <value name="A">
-                                          <block type="variables_get" id="b1z_51rw7k">
-                                            <field name="VAR" id="v1j_gybqhw">RSI</field>
+                                          <block type="variables_get" id="b1z_utl013">
+                                            <field name="VAR" id="v1j_i4auvb">RSI</field>
                                           </block>
                                         </value>
                                         <value name="B">
-                                          <block type="math_number" id="b20_ln55kh">
+                                          <block type="math_number" id="b20_tdbw78">
                                             <field name="NUM">30</field>
                                           </block>
                                         </value>
                                       </block>
                                     </value>
                                     <value name="B">
-                                      <block type="logic_operation" id="b29_hwmg2s">
+                                      <block type="logic_operation" id="b29_yhjhll">
                                         <field name="OP">AND</field>
                                         <value name="A">
-                                          <block type="logic_compare" id="b24_hzm75g">
+                                          <block type="logic_compare" id="b24_qtnusi">
                                             <field name="OP">LT</field>
                                             <value name="A">
-                                              <block type="variables_get" id="b22_kj21m1">
-                                                <field name="VAR" id="v1j_gybqhw">RSI</field>
+                                              <block type="variables_get" id="b22_cdfrad">
+                                                <field name="VAR" id="v1j_i4auvb">RSI</field>
                                               </block>
                                             </value>
                                             <value name="B">
-                                              <block type="math_number" id="b23_muapn1">
+                                              <block type="math_number" id="b23_vazhqk">
                                                 <field name="NUM">50</field>
                                               </block>
                                             </value>
                                           </block>
                                         </value>
                                         <value name="B">
-                                          <block type="logic_compare" id="b28_c5k6e2">
+                                          <block type="logic_compare" id="b28_g00yp2">
                                             <field name="OP">LT</field>
                                             <value name="A">
-                                              <block type="variables_get" id="b25_uqdvu5">
-                                                <field name="VAR" id="v1q_dbffxl">Momentum</field>
+                                              <block type="variables_get" id="b25_e9as72">
+                                                <field name="VAR" id="v1q_4dkchx">Momentum</field>
                                               </block>
                                             </value>
                                             <value name="B">
-                                              <block type="math_single" id="b27_11p8yl">
+                                              <block type="math_single" id="b27_ijfdq7">
                                                 <field name="OP">NEG</field>
                                                 <value name="NUM">
-                                                  <block type="math_number" id="b26_n2wghw">
+                                                  <block type="math_number" id="b26_k8t7ls">
                                                     <field name="NUM">0</field>
                                                   </block>
                                                 </value>
@@ -471,7 +469,7 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                           </block>
                         </value>
                         <statement name="DO1">
-                          <block type="purchase" id="b2u_9q1hc1">
+                          <block type="purchase" id="b2u_neop9x">
                             <field name="PURCHASE_LIST">PUT</field>
                           </block>
                         </statement>
@@ -486,84 +484,84 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
       </block>
     </statement>
   </block>
-  <block type="after_purchase" id="b48_85a1r4" x="900" y="0">
+  <block type="after_purchase" id="b48_tat0hj" x="900" y="0">
     <comment pinned="false" h="100" w="300">MARTINGALE + RISK MANAGEMENT — runs after every contract settles.
-• Loss &amp; below step cap → Stake = Stake × 1.6 (controlled progression).
-• Loss &amp; step cap reached → reset Stake to base &amp; restart cycle (escalation is capped).
-• Win → reset Stake to base &amp; clear loss streak (reset cycle).
-• Total P&amp;L, Stop-Loss or Max-Trades hit → pause trading for the session (circuit breaker).</comment>
+• Loss & below step cap → Stake = Stake × 1.6 (controlled progression).
+• Loss & step cap reached → reset Stake to base & restart cycle (escalation is capped).
+• Win → reset Stake to base & clear loss streak (reset cycle).
+• Total P&L, Stop-Loss or Max-Trades hit → pause trading for the session (circuit breaker).</comment>
     <statement name="AFTERPURCHASE_STACK">
-      <block type="math_change" id="b41_gmm3ab">
-        <field name="VAR" id="vt_0fd77n">Total Profit</field>
+      <block type="math_change" id="b41_t5j10x">
+        <field name="VAR" id="vt_f1ayz9">Total Profit</field>
         <value name="DELTA">
-          <block type="read_details" id="b40_2kq3da">
+          <block type="read_details" id="b40_or7tbx">
             <field name="DETAIL_INDEX">4</field>
           </block>
         </value>
         <next>
-          <block type="math_change" id="b43_btcak2">
-            <field name="VAR" id="vw_pfv7eu">Total Trades</field>
+          <block type="math_change" id="b43_mmmam0">
+            <field name="VAR" id="vw_9t3r5n">Total Trades</field>
             <value name="DELTA">
-              <block type="math_number" id="b42_nqa46a">
+              <block type="math_number" id="b42_9k7g5q">
                 <field name="NUM">1</field>
               </block>
             </value>
             <next>
-              <block type="controls_if" id="b3i_wnmvpt">
+              <block type="controls_if" id="b3i_a5jpyg">
                 <mutation elseif="0" else="1" />
                 <value name="IF0">
-                  <block type="contract_check_result" id="b3h_mde8k3">
+                  <block type="contract_check_result" id="b3h_6ipd5l">
                     <field name="CHECK_RESULT">loss</field>
                   </block>
                 </value>
                 <statement name="DO0">
-                  <block type="math_change" id="b2y_h8q4wk">
-                    <field name="VAR" id="vk_ciac5f">Loss Streak</field>
+                  <block type="math_change" id="b2y_xuarl3">
+                    <field name="VAR" id="vk_65xill">Loss Streak</field>
                     <value name="DELTA">
-                      <block type="math_number" id="b2x_x9sozm">
+                      <block type="math_number" id="b2x_dq3ru8">
                         <field name="NUM">1</field>
                       </block>
                     </value>
                     <next>
-                      <block type="controls_if" id="b3c_s4ecp3">
+                      <block type="controls_if" id="b3c_4mwva6">
                         <mutation elseif="0" else="1" />
                         <value name="IF0">
-                          <block type="logic_compare" id="b31_km45ej">
+                          <block type="logic_compare" id="b31_ipi0o9">
                             <field name="OP">GTE</field>
                             <value name="A">
-                              <block type="variables_get" id="b2z_ld6247">
-                                <field name="VAR" id="vk_ciac5f">Loss Streak</field>
+                              <block type="variables_get" id="b2z_e6zkds">
+                                <field name="VAR" id="vk_65xill">Loss Streak</field>
                               </block>
                             </value>
                             <value name="B">
-                              <block type="variables_get" id="b30_zih48w">
-                                <field name="VAR" id="vh_n5quv9">Max Martingale Steps</field>
+                              <block type="variables_get" id="b30_wjcchj">
+                                <field name="VAR" id="vh_n0pkze">Max Martingale Steps</field>
                               </block>
                             </value>
                           </block>
                         </value>
                         <statement name="DO0">
-                          <block type="variables_set" id="b33_y2nu8f">
-                            <field name="VAR" id="vb_clkhds">Stake</field>
+                          <block type="variables_set" id="b33_gphhfe">
+                            <field name="VAR" id="vb_go5h8j">Stake</field>
                             <value name="VALUE">
-                              <block type="variables_get" id="b32_l03stl">
-                                <field name="VAR" id="v8_ul4ozu">Base Stake</field>
+                              <block type="variables_get" id="b32_w4af4x">
+                                <field name="VAR" id="v8_s3mgsa">Base Stake</field>
                               </block>
                             </value>
                             <next>
-                              <block type="variables_set" id="b35_z7qmvx">
-                                <field name="VAR" id="vk_ciac5f">Loss Streak</field>
+                              <block type="variables_set" id="b35_9brdq1">
+                                <field name="VAR" id="vk_65xill">Loss Streak</field>
                                 <value name="VALUE">
-                                  <block type="math_number" id="b34_4ws0h3">
+                                  <block type="math_number" id="b34_n0gkrt">
                                     <field name="NUM">0</field>
                                   </block>
                                 </value>
                                 <next>
-                                  <block type="notify" id="b37_jve8f4">
+                                  <block type="notify" id="b37_uye379">
                                     <field name="NOTIFICATION_TYPE">error</field>
                                     <field name="NOTIFICATION_SOUND">silent</field>
                                     <value name="MESSAGE">
-                                      <block type="text" id="b36_v3r367">
+                                      <block type="text" id="b36_ab5ub4">
                                         <field name="TEXT">Martingale step cap reached — stake reset to base.</field>
                                       </block>
                                     </value>
@@ -574,19 +572,19 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                           </block>
                         </statement>
                         <statement name="ELSE">
-                          <block type="variables_set" id="b3b_ayz714">
-                            <field name="VAR" id="vb_clkhds">Stake</field>
+                          <block type="variables_set" id="b3b_l7c06g">
+                            <field name="VAR" id="vb_go5h8j">Stake</field>
                             <value name="VALUE">
-                              <block type="math_arithmetic" id="b3a_tam033">
+                              <block type="math_arithmetic" id="b3a_y2uwwo">
                                 <field name="OP">MULTIPLY</field>
                                 <value name="A">
-                                  <block type="variables_get" id="b38_kdm3yv">
-                                    <field name="VAR" id="vb_clkhds">Stake</field>
+                                  <block type="variables_get" id="b38_9ac7rx">
+                                    <field name="VAR" id="vb_go5h8j">Stake</field>
                                   </block>
                                 </value>
                                 <value name="B">
-                                  <block type="variables_get" id="b39_83i2a1">
-                                    <field name="VAR" id="ve_dzqh1o">Martingale Multiplier</field>
+                                  <block type="variables_get" id="b39_blmq9x">
+                                    <field name="VAR" id="ve_o13sa6">Martingale Multiplier</field>
                                   </block>
                                 </value>
                               </block>
@@ -598,19 +596,19 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                   </block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="variables_set" id="b3e_0kzb4x">
-                    <field name="VAR" id="vk_ciac5f">Loss Streak</field>
+                  <block type="variables_set" id="b3e_wip27t">
+                    <field name="VAR" id="vk_65xill">Loss Streak</field>
                     <value name="VALUE">
-                      <block type="math_number" id="b3d_yd3sez">
+                      <block type="math_number" id="b3d_pws0j3">
                         <field name="NUM">0</field>
                       </block>
                     </value>
                     <next>
-                      <block type="variables_set" id="b3g_xamq34">
-                        <field name="VAR" id="vb_clkhds">Stake</field>
+                      <block type="variables_set" id="b3g_rx44e7">
+                        <field name="VAR" id="vb_go5h8j">Stake</field>
                         <value name="VALUE">
-                          <block type="variables_get" id="b3f_09xhbu">
-                            <field name="VAR" id="v8_ul4ozu">Base Stake</field>
+                          <block type="variables_get" id="b3f_mpfpyk">
+                            <field name="VAR" id="v8_s3mgsa">Base Stake</field>
                           </block>
                         </value>
                       </block>
@@ -618,43 +616,43 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                   </block>
                 </statement>
                 <next>
-                  <block type="controls_if" id="b3z_8jx98k">
+                  <block type="controls_if" id="b3z_dklbea">
                     <mutation elseif="0" else="0" />
                     <value name="IF0">
-                      <block type="logic_operation" id="b3u_hjmkps">
+                      <block type="logic_operation" id="b3u_h1l038">
                         <field name="OP">OR</field>
                         <value name="A">
-                          <block type="logic_compare" id="b3l_vkvawa">
+                          <block type="logic_compare" id="b3l_mg022t">
                             <field name="OP">GTE</field>
                             <value name="A">
-                              <block type="variables_get" id="b3j_ddztos">
-                                <field name="VAR" id="vt_0fd77n">Total Profit</field>
+                              <block type="variables_get" id="b3j_kd9b4a">
+                                <field name="VAR" id="vt_f1ayz9">Total Profit</field>
                               </block>
                             </value>
                             <value name="B">
-                              <block type="variables_get" id="b3k_qe1evr">
-                                <field name="VAR" id="vn_lh4p77">Take Profit</field>
+                              <block type="variables_get" id="b3k_6oum1t">
+                                <field name="VAR" id="vn_4ya3ia">Take Profit</field>
                               </block>
                             </value>
                           </block>
                         </value>
                         <value name="B">
-                          <block type="logic_operation" id="b3t_gpjxvr">
+                          <block type="logic_operation" id="b3t_fq19uh">
                             <field name="OP">OR</field>
                             <value name="A">
-                              <block type="logic_compare" id="b3p_31o0lp">
+                              <block type="logic_compare" id="b3p_79y1um">
                                 <field name="OP">LTE</field>
                                 <value name="A">
-                                  <block type="variables_get" id="b3m_x59o9z">
-                                    <field name="VAR" id="vt_0fd77n">Total Profit</field>
+                                  <block type="variables_get" id="b3m_hlp28c">
+                                    <field name="VAR" id="vt_f1ayz9">Total Profit</field>
                                   </block>
                                 </value>
                                 <value name="B">
-                                  <block type="math_single" id="b3o_jbvrhu">
+                                  <block type="math_single" id="b3o_7bbyc4">
                                     <field name="OP">NEG</field>
                                     <value name="NUM">
-                                      <block type="variables_get" id="b3n_y5nxn4">
-                                        <field name="VAR" id="vq_64wm1l">Stop Loss</field>
+                                      <block type="variables_get" id="b3n_7s81qr">
+                                        <field name="VAR" id="vq_he1sz9">Stop Loss</field>
                                       </block>
                                     </value>
                                   </block>
@@ -662,16 +660,16 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                               </block>
                             </value>
                             <value name="B">
-                              <block type="logic_compare" id="b3s_qadihk">
+                              <block type="logic_compare" id="b3s_ys5wij">
                                 <field name="OP">GTE</field>
                                 <value name="A">
-                                  <block type="variables_get" id="b3q_dnyns5">
-                                    <field name="VAR" id="vw_pfv7eu">Total Trades</field>
+                                  <block type="variables_get" id="b3q_88pa23">
+                                    <field name="VAR" id="vw_9t3r5n">Total Trades</field>
                                   </block>
                                 </value>
                                 <value name="B">
-                                  <block type="variables_get" id="b3r_dzwlzp">
-                                    <field name="VAR" id="vz_1oiqh2">Max Trades</field>
+                                  <block type="variables_get" id="b3r_8k1p1m">
+                                    <field name="VAR" id="vz_r1n6pj">Max Trades</field>
                                   </block>
                                 </value>
                               </block>
@@ -681,19 +679,19 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                       </block>
                     </value>
                     <statement name="DO0">
-                      <block type="variables_set" id="b3w_ynk6hx">
-                        <field name="VAR" id="v12_9s09cr">Trading Enabled</field>
+                      <block type="variables_set" id="b3w_d9qcz7">
+                        <field name="VAR" id="v12_s5fyiv">Trading Enabled</field>
                         <value name="VALUE">
-                          <block type="logic_boolean" id="b3v_wt2zuf">
+                          <block type="logic_boolean" id="b3v_noanp5">
                             <field name="BOOL">FALSE</field>
                           </block>
                         </value>
                         <next>
-                          <block type="notify" id="b3y_jvdq39">
+                          <block type="notify" id="b3y_lqnm6u">
                             <field name="NOTIFICATION_TYPE">error</field>
                             <field name="NOTIFICATION_SOUND">silent</field>
                             <value name="MESSAGE">
-                              <block type="text" id="b3x_i3mw03">
+                              <block type="text" id="b3x_567r3y">
                                 <field name="TEXT">Risk limit reached (Take-Profit / Stop-Loss / max trades). Trading paused.</field>
                               </block>
                             </value>
@@ -702,20 +700,20 @@ No signal = no trade (waits for full confluence — no random/emotional entries)
                       </block>
                     </statement>
                     <next>
-                      <block type="notify" id="b47_z0gq5n">
+                      <block type="notify" id="b47_og6z1d">
                         <field name="NOTIFICATION_TYPE">success</field>
                         <field name="NOTIFICATION_SOUND">silent</field>
                         <value name="MESSAGE">
-                          <block type="text_join" id="b46_dzljro">
+                          <block type="text_join" id="b46_mb2h5f">
                             <mutation items="2" />
                             <value name="ADD0">
-                              <block type="text" id="b44_6ii4o6">
+                              <block type="text" id="b44_q7e89l">
                                 <field name="TEXT">Trade closed • Net P&amp;L: </field>
                               </block>
                             </value>
                             <value name="ADD1">
-                              <block type="variables_get" id="b45_wyypdp">
-                                <field name="VAR" id="vt_0fd77n">Total Profit</field>
+                              <block type="variables_get" id="b45_qsyrsy">
+                                <field name="VAR" id="vt_f1ayz9">Total Profit</field>
                               </block>
                             </value>
                           </block>
