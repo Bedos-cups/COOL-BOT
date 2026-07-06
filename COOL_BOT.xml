@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
+  <!-- ============================================================
+       DerivBot Pro — Ultimate Martingale
+       Généré par DerivBot Pro Builder
+       Stratégie: RSI(14) + MA(10) + Martingale x2.15
+       Mises: $0.5 → $1.07 → $2.3 → $4.94 → $10.62 → $22.83
+       Risque total max: $42.26
+       Stop Gain: $50 | Stop Loss: $200
+       ============================================================ -->
+
+  <variables>
+    <!-- Variables de mise et Martingale -->
+    <variable id="Kl#VwFg7QrAb2Lm$WxGh">Stake</variable>
+    <variable id="pdRF@znbPD9xlZNB7vjX">Initial Stake</variable>
+    <variable id="tldVNF^7zrjbTLD$5xph">Martingale Level</variable>
+    <variable id="nZL^1nZL^1nZL^1nZL^1">Martingale Multiplier</variable>
+    <variable id="pdRF@znbPD9xlZNB7vjX">Max Stake</variable>
+    <variable id="nZL^1nZL^1nZL^1nZL^1">Recovery Mode</variable>
+
+    <!-- Variables de profit et gestion du risque -->
+    <variable id="59$*DHLPTXbfjnrvz37@">Total Profit</variable>
+    <variable id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</variable>
+    <variable id="obOB6tgTG@ylYL&3qdQD">Take Profit</variable>
+    <variable id="0zyxwvutsrqponmlkjih">Stop Loss Limit</variable>
+
+    <!-- Variables de séquence de pertes -->
+    <variable id="mXI@whSD6rcN&1mXI@wh">Loss Streak</variable>
+    <variable id="*Pfv@JZp5DTjz^Ndt9HX">Max Loss Streak</variable>
+    <variable id="ungZSLE^81ungZSLE^81">Win Count</variable>
+    <variable id="pdRF@znbPD9xlZNB7vjX">Loss Count</variable>
+
+    <!-- Variables de signal et tendance -->
+    <variable id="S1S1S1S1S1S1S1S1S1S1">Trade Direction</variable>
+    <variable id="rhXND@1rhXND@1rhXND@">Cooldown Counter</variable>
+    <variable id="$HTfr3^JVht5*LXjv7BN">Is Active</variable>
+    <variable id="Gd0FczEbyDaxCZwBYvAX">Last Result</variable>
+    <variable id="Y$kHwT8fCrO3a^mJyV!h">RSI Value</variable>
+    <variable id="ungZSLE^81ungZSLE^81">MA Value</variable>
+    <variable id="cDwX&rS@mN6hI1cDwX&r">Prev Close</variable>
+    <variable id="23456789!@#$%^&*ABCD">Current Close</variable>
+    <variable id="nZL^1nZL^1nZL^1nZL^1">Candle Is Bullish</variable>
+    <variable id="6@&DINSXchmrw16@&DIN">Status Text</variable>
+  </variables>
+
+  <!-- ============================================================
+       BLOC PRINCIPAL: DÉFINITION DU TRADE
+       ============================================================ -->
+  <block type="trade_definition" id="23456789!@#$%^&*ABCD" deletable="false" x="0" y="60">
+    <statement name="TRADE_OPTIONS">
+
+      <!-- Marché -->
+      <block type="trade_definition_market" id="!BKTclu3#DMVenw5%FOX" deletable="false" movable="false">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">R_100</field>
+        <next>
+
+          <!-- Type de trade -->
+          <block type="trade_definition_tradetype" id="47!$&BEHKNQTWZcfilor" deletable="false" movable="false">
+            <field name="TRADETYPECAT_LIST">callput</field>
+            <field name="TRADETYPE_LIST">callput</field>
+            <next>
+
+              <!-- Type de contrat -->
+              <block type="trade_definition_contracttype" id="3579@$^*BDFHJLNPRTVX" deletable="false" movable="false">
+                <field name="TYPE_LIST">both</field>
+                <next>
+
+                  <!-- Intervalle de bougies -->
+                  <block type="trade_definition_candleinterval" id="^LZn1^LZn1^LZn1^LZn1" deletable="false" movable="false">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+
+                      <!-- Redémarrer achat/vente -->
+                      <block type="trade_definition_restartbuysell" id="OtGl&d8V0NsFk^c7UzMr" deletable="false" movable="false">
+                        <field name="TIME_MACHINE_ENABLED">TRUE</field>
+                        <next>
+
+                          <!-- Redémarrer sur erreur -->
+                          <block type="trade_definition_restartonerror" id="eH2fI3gJ4hK5iL6jM7kN" deletable="false" movable="false">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <!-- ============================================================
+         INITIALISATION: Variables de départ
+         ============================================================ -->
+    <statement name="INITIALIZATION">
+
+      <!-- Message de démarrage -->
+      <block type="notify" id="ungZSLE^81ungZSLE^81">
+        <field name="NOTIFICATION_TYPE">success</field>
+        <field name="NOTIFICATION_SOUND">silent</field>
+        <value name="MESSAGE">
+          <shadow type="text" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+            <field name="TEXT">🚀 DerivBot Pro — Ultimate Martingale — Démarrage en cours...</field>
+          </shadow>
+        </value>
+        <next>
+
+          <!-- Mise initiale -->
+          <block type="variables_set" id="lVF7rbL$xhRB3nXH9tdN">
+            <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+            <value name="VALUE">
+              <block type="math_number" id="tldVNF^7zrjbTLD$5xph">
+                <field name="NUM">0.5</field>
+              </block>
+            </value>
+            <next>
+
+              <!-- Mise initiale sauvegardée -->
+              <block type="variables_set" id="&Ncr6DShw@IXm1&Ncr6D">
+                <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Initial Stake</field>
+                <value name="VALUE">
+                  <block type="math_number" id="Gd0FczEbyDaxCZwBYvAX">
+                    <field name="NUM">0.5</field>
+                  </block>
+                </value>
+                <next>
+
+                  <!-- Mise maximale autorisée -->
+                  <block type="variables_set" id="&Ncr6DShw@IXm1&Ncr6D">
+                    <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Max Stake</field>
+                    <value name="VALUE">
+                      <block type="math_number" id="Gd0FczEbyDaxCZwBYvAX">
+                        <field name="NUM">22.83</field>
+                      </block>
+                    </value>
+                    <next>
+
+                      <!-- Multiplicateur Martingale -->
+                      <block type="variables_set" id="fJ5jN9nR$rV*vZDzdH3h">
+                        <field name="VAR" id="nZL^1nZL^1nZL^1nZL^1">Martingale Multiplier</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="nZL^1nZL^1nZL^1nZL^1">
+                            <field name="NUM">2.15</field>
+                          </block>
+                        </value>
+                        <next>
+
+                          <!-- Niveau Martingale initial -->
+                          <block type="variables_set" id="lVF7rbL$xhRB3nXH9tdN">
+                            <field name="VAR" id="tldVNF^7zrjbTLD$5xph">Martingale Level</field>
+                            <value name="VALUE">
+                              <block type="math_number" id="tldVNF^7zrjbTLD$5xph">
+                                <field name="NUM">0</field>
+                              </block>
+                            </value>
+                            <next>
+
+                              <!-- Profit total -->
+                              <block type="variables_set" id="OtGl&d8V0NsFk^c7UzMr">
+                                <field name="VAR" id="59$*DHLPTXbfjnrvz37@">Total Profit</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="W9e*mHuP2X!fAnIvQ3Y@">
+                                    <field name="NUM">0</field>
+                                  </block>
+                                </value>
+                                <next>
+
+                                  <!-- Profit de session -->
+                                  <block type="variables_set" id="DXr@Nh1DXr@Nh1DXr@Nh">
+                                    <field name="VAR" id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</field>
+                                    <value name="VALUE">
+                                      <block type="math_number" id="Ln^Z1Ln^Z1Ln^Z1Ln^Z1">
+                                        <field name="NUM">0</field>
+                                      </block>
+                                    </value>
+                                    <next>
+
+                                      <!-- Take Profit -->
+                                      <block type="variables_set" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                                        <field name="VAR" id="obOB6tgTG@ylYL&3qdQD">Take Profit</field>
+                                        <value name="VALUE">
+                                          <block type="math_number" id="RzPxNvLtJrHpFnDlBj*h">
+                                            <field name="NUM">50</field>
+                                          </block>
+                                        </value>
+                                        <next>
+
+                                          <!-- Stop Loss -->
+                                          <block type="variables_set" id="#FQbmx8BMXit4^ITep0@">
+                                            <field name="VAR" id="0zyxwvutsrqponmlkjih">Stop Loss Limit</field>
+                                            <value name="VALUE">
+                                              <block type="math_number" id="CVo7Ibu$Oh0BUn6Hat#N">
+                                                <field name="NUM">200</field>
+                                              </block>
+                                            </value>
+                                            <next>
+
+                                              <!-- Compteur de pertes consécutives -->
+                                              <block type="variables_set" id="$HTfr3^JVht5*LXjv7BN">
+                                                <field name="VAR" id="mXI@whSD6rcN&1mXI@wh">Loss Streak</field>
+                                                <value name="VALUE">
+                                                  <block type="math_number" id="CVo7Ibu$Oh0BUn6Hat#N">
+                                                    <field name="NUM">0</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+
+                                                  <!-- Max Loss Streak -->
+                                                  <block type="variables_set" id="Z^nL1Z^nL1Z^nL1Z^nL1">
+                                                    <field name="VAR" id="*Pfv@JZp5DTjz^Ndt9HX">Max Loss Streak</field>
+                                                    <value name="VALUE">
+                                                      <block type="math_number" id="hN@rXD1hN@rXD1hN@rXD">
+                                                        <field name="NUM">8</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+
+                                                      <!-- Compteurs de victoires/défaites -->
+                                                      <block type="variables_set" id="ARiz&Pgx%Nev#Lct!Jar">
+                                                        <field name="VAR" id="ungZSLE^81ungZSLE^81">Win Count</field>
+                                                        <value name="VALUE">
+                                                          <block type="math_number" id="Ih6Nm@Sr&XwDc1Ih6Nm@">
+                                                            <field name="NUM">0</field>
+                                                          </block>
+                                                        </value>
+                                                        <next>
+
+                                                          <block type="variables_set" id="ungZSLE^81ungZSLE^81">
+                                                            <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Loss Count</field>
+                                                            <value name="VALUE">
+                                                              <block type="math_number" id="23456789!@#$%^&*ABCD">
+                                                                <field name="NUM">0</field>
+                                                              </block>
+                                                            </value>
+                                                            <next>
+
+                                                              <!-- Cooldown -->
+                                                              <block type="variables_set" id="ARiz&Pgx%Nev#Lct!Jar">
+                                                                <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+                                                                <value name="VALUE">
+                                                                  <block type="math_number" id="cDwX&rS@mN6hI1cDwX&r">
+                                                                    <field name="NUM">0</field>
+                                                                  </block>
+                                                                </value>
+                                                                <next>
+
+                                                                  <!-- Bot actif -->
+                                                                  <block type="variables_set" id="59$*DHLPTXbfjnrvz37@">
+                                                                    <field name="VAR" id="$HTfr3^JVht5*LXjv7BN">Is Active</field>
+                                                                    <value name="VALUE">
+                                                                      <block type="logic_boolean" id="$HTfr3^JVht5*LXjv7BN">
+                                                                        <field name="BOOL">TRUE</field>
+                                                                      </block>
+                                                                    </value>
+                                                                    <next>
+
+                                                                      <!-- Mode récupération -->
+                                                                      <block type="variables_set" id="eH2fI3gJ4hK5iL6jM7kN">
+                                                                        <field name="VAR" id="nZL^1nZL^1nZL^1nZL^1">Recovery Mode</field>
+                                                                        <value name="VALUE">
+                                                                          <block type="logic_boolean" id="mXI@whSD6rcN&1mXI@wh">
+                                                                            <field name="BOOL">FALSE</field>
+                                                                          </block>
+                                                                        </value>
+                                                                        <next>
+
+                                                                          <!-- Direction par défaut -->
+                                                                          <block type="variables_set" id="0zyxwvutsrqponmlkjih">
+                                                                            <field name="VAR" id="S1S1S1S1S1S1S1S1S1S1">Trade Direction</field>
+                                                                            <value name="VALUE">
+                                                                              <block type="text" id="mXI@whSD6rcN&1mXI@wh">
+                                                                                <field name="TEXT">CALL</field>
+                                                                              </block>
+                                                                            </value>
+                                                                          </block>
+
+                                                                        </next>
+                                                                      </block>
+                                                                    </next>
+                                                                  </block>
+                                                                </next>
+                                                              </block>
+                                                            </next>
+                                                          </block>
+                                                        </next>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <!-- ============================================================
+         SUBMARKET: Options de trade avec montant dynamique
+         ============================================================ -->
+    <statement name="SUBMARKET">
+      <block type="trade_definition_tradeoptions" id="BTl3DVn5FXp7HZr9Jbt@">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" has_first_barrier="false" has_second_barrier="false" has_prediction="false"></mutation>
+        <field name="DURATIONTYPE_LIST">t</field>
+        <value name="DURATION">
+          <shadow type="math_number" id="fJ5jN9nR$rV*vZDzdH3h">
+            <field name="NUM">3</field>
+          </shadow>
+        </value>
+        <value name="AMOUNT">
+          <shadow type="math_number" id="fJ5jN9nR$rV*vZDzdH3h">
+            <field name="NUM">0.5</field>
+          </shadow>
+          <block type="variables_get" id="FbxBXt^Tp@Pl7Lh3HdzD">
+            <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+
+  <!-- ============================================================
+       BLOC TICK ANALYSIS: Signal RSI + MA + Confirmation
+       ============================================================ -->
+  <block type="tick_analysis" id="S1S1S1S1S1S1S1S1S1S1" x="0" y="900">
+    <statement name="TICKANALYSIS_STACK">
+
+      <!-- Décrémenter le cooldown si > 0 -->
+      <block type="controls_if" id="23456789!@#$%^&*ABCD">
+        <value name="IF0">
+          <block type="logic_compare" id="@DNXhr1@DNXhr1@DNXhr">
+            <field name="OP">GT</field>
+            <value name="A">
+              <block type="variables_get" id="ungZSLE^81ungZSLE^81">
+                <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="math_number" id="W9e*mHuP2X!fAnIvQ3Y@">
+                <field name="NUM">0</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="math_change" id="23456789!@#$%^&*ABCD">
+            <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+            <value name="DELTA">
+              <shadow type="math_number" id="Gd0FczEbyDaxCZwBYvAX">
+                <field name="NUM">-1</field>
+              </shadow>
+            </value>
+          </block>
+        </statement>
+        <next>
+
+          <!-- Vérifier si le bot est actif -->
+          <block type="controls_if" id="pdRF@znbPD9xlZNB7vjX">
+            <value name="IF0">
+              <block type="logic_operation" id="mXI@whSD6rcN&1mXI@wh">
+                <field name="OP">AND</field>
+                <value name="A">
+                  <block type="variables_get" id="fJ5jN9nR$rV*vZDzdH3h">
+                    <field name="VAR" id="$HTfr3^JVht5*LXjv7BN">Is Active</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="logic_compare" id="Ln^Z1Ln^Z1Ln^Z1Ln^Z1">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="variables_get" id="Hf3Jh5Lj7Nl9Pn@Rp$Tr">
+                        <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="math_number" id="yvspmjgdaXUROLIFC*%@">
+                        <field name="NUM">0</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+
+              <!-- Obtenir RSI -->
+              <block type="variables_set" id="xtplhdZVRNJFB^@73zvr">
+                <field name="VAR" id="Y$kHwT8fCrO3a^mJyV!h">RSI Value</field>
+                <value name="VALUE">
+                  <block type="indicators_get_value" id="47!$&BEHKNQTWZcfilor">
+                    <field name="INDICATOR_LIST">RSI</field>
+                    <field name="FIELD_LIST">VALUE</field>
+                    <value name="APPLIED_PRICE">
+                      <block type="text" id="jR*zhP^xfN$vdL@tbJ9r">
+                        <field name="TEXT">CLOSE</field>
+                      </block>
+                    </value>
+                    <value name="PERIOD">
+                      <block type="math_number" id="8^ELSZgnu18^ELSZgnu1">
+                        <field name="NUM">14</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <next>
+
+                  <!-- Obtenir MA -->
+                  <block type="variables_set" id="BTl3DVn5FXp7HZr9Jbt@">
+                    <field name="VAR" id="ungZSLE^81ungZSLE^81">MA Value</field>
+                    <value name="VALUE">
+                      <block type="indicators_get_value" id="Ih6Nm@Sr&XwDc1Ih6Nm@">
+                        <field name="INDICATOR_LIST">MA</field>
+                        <field name="FIELD_LIST">VALUE</field>
+                        <value name="APPLIED_PRICE">
+                          <block type="text" id="59$*DHLPTXbfjnrvz37@">
+                            <field name="TEXT">CLOSE</field>
+                          </block>
+                        </value>
+                        <value name="PERIOD">
+                          <block type="math_number" id="MpAd6RuFi@WzKn&b4PsD">
+                            <field name="NUM">10</field>
+                          </block>
+                        </value>
+                        <value name="MA_TYPE">
+                          <block type="text" id="xtplhdZVRNJFB^@73zvr">
+                            <field name="TEXT">exponential</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <next>
+
+                      <!-- Obtenir le prix de clôture actuel -->
+                      <block type="variables_set" id="T3V5X7Z9b@d$f^h*jBlD">
+                        <field name="VAR" id="23456789!@#$%^&*ABCD">Current Close</field>
+                        <value name="VALUE">
+                          <block type="tick" id="ungZSLE^81ungZSLE^81">
+                            <field name="OHLCFIELD_LIST">CLOSE</field>
+                          </block>
+                        </value>
+                        <next>
+
+                          <!-- SIGNAL HAUSSIER: RSI < 30 ET prix > MA -->
+                          <block type="controls_if" id="iP%vcJ8pWD2jQ^wdK9qX">
+                            <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1"></mutation>
+
+                            <!-- Condition haussière -->
+                            <value name="IF0">
+                              <block type="logic_operation" id="&Ncr6DShw@IXm1&Ncr6D">
+                                <field name="OP">AND</field>
+                                <value name="A">
+                                  <block type="logic_compare" id="0zyxwvutsrqponmlkjih">
+                                    <field name="OP">LT</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="zxvtrpnljhfdbZXVTRPN">
+                                        <field name="VAR" id="Y$kHwT8fCrO3a^mJyV!h">RSI Value</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="math_number" id="$HTfr3^JVht5*LXjv7BN">
+                                        <field name="NUM">30</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <block type="logic_compare" id="CVo7Ibu$Oh0BUn6Hat#N">
+                                    <field name="OP">GT</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="V7b$hBnHtNzT5Z@f*lFr">
+                                        <field name="VAR" id="23456789!@#$%^&*ABCD">Current Close</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="variables_get" id="DXr@Nh1DXr@Nh1DXr@Nh">
+                                        <field name="VAR" id="ungZSLE^81ungZSLE^81">MA Value</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                              </block>
+                            </value>
+
+                            <!-- Action haussière: direction = CALL -->
+                            <statement name="DO0">
+                              <block type="variables_set" id="nZL^1nZL^1nZL^1nZL^1">
+                                <field name="VAR" id="S1S1S1S1S1S1S1S1S1S1">Trade Direction</field>
+                                <value name="VALUE">
+                                  <block type="text" id="Kl#VwFg7QrAb2Lm$WxGh">
+                                    <field name="TEXT">CALL</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </statement>
+
+                            <!-- Condition baissière: RSI > 70 ET prix < MA -->
+                            <value name="IF1">
+                              <block type="logic_operation" id="vpjdXRLF*@5ztnhbVPJD">
+                                <field name="OP">AND</field>
+                                <value name="A">
+                                  <block type="logic_compare" id="^LZn1^LZn1^LZn1^LZn1">
+                                    <field name="OP">GT</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="MpAd6RuFi@WzKn&b4PsD">
+                                        <field name="VAR" id="Y$kHwT8fCrO3a^mJyV!h">RSI Value</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="math_number" id="Kl#VwFg7QrAb2Lm$WxGh">
+                                        <field name="NUM">70</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <value name="B">
+                                  <block type="logic_compare" id="Y$kHwT8fCrO3a^mJyV!h">
+                                    <field name="OP">LT</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="0zyxwvutsrqponmlkjih">
+                                        <field name="VAR" id="23456789!@#$%^&*ABCD">Current Close</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="variables_get" id="iP%vcJ8pWD2jQ^wdK9qX">
+                                        <field name="VAR" id="ungZSLE^81ungZSLE^81">MA Value</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                              </block>
+                            </value>
+
+                            <!-- Action baissière: direction = PUT -->
+                            <statement name="DO1">
+                              <block type="variables_set" id="!BKTclu3#DMVenw5%FOX">
+                                <field name="VAR" id="S1S1S1S1S1S1S1S1S1S1">Trade Direction</field>
+                                <value name="VALUE">
+                                  <block type="text" id="hN@rXD1hN@rXD1hN@rXD">
+                                    <field name="TEXT">PUT</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </statement>
+
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+
+  <!-- ============================================================
+       BLOC BEFORE PURCHASE: Achat conditionnel
+       ============================================================ -->
+  <block type="before_purchase" id="7$BHNTZflrx39^DJPVbh" deletable="false" x="0" y="1800">
+    <statement name="BEFOREPURCHASE_STACK">
+
+      <!-- Vérifier: bot actif + cooldown = 0 + stop loss non atteint -->
+      <block type="controls_if" id="tldVNF^7zrjbTLD$5xph">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+        <value name="IF0">
+          <block type="logic_operation" id="^LZn1^LZn1^LZn1^LZn1">
+            <field name="OP">AND</field>
+            <value name="A">
+              <block type="logic_operation" id="cDwX&rS@mN6hI1cDwX&r">
+                <field name="OP">AND</field>
+                <value name="A">
+                  <block type="variables_get" id="!BKTclu3#DMVenw5%FOX">
+                    <field name="VAR" id="$HTfr3^JVht5*LXjv7BN">Is Active</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="logic_compare" id="FbxBXt^Tp@Pl7Lh3HdzD">
+                    <field name="OP">EQ</field>
+                    <value name="A">
+                      <block type="variables_get" id="Kl#VwFg7QrAb2Lm$WxGh">
+                        <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="math_number" id="6@&DINSXchmrw16@&DIN">
+                        <field name="NUM">0</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <value name="B">
+              <!-- Vérification stop loss: profit session > -stopLoss -->
+              <block type="logic_compare" id="#FQbmx8BMXit4^ITep0@">
+                <field name="OP">GT</field>
+                <value name="A">
+                  <block type="variables_get" id="mXI@whSD6rcN&1mXI@wh">
+                    <field name="VAR" id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="math_arithmetic" id="Ih6Nm@Sr&XwDc1Ih6Nm@">
+                    <field name="OP">MULTIPLY</field>
+                    <value name="A">
+                      <shadow type="math_number" id="*Pfv@JZp5DTjz^Ndt9HX">
+                        <field name="NUM">-1</field>
+                      </shadow>
+                    </value>
+                    <value name="B">
+                      <shadow type="math_number" id="Hf3Jh5Lj7Nl9Pn@Rp$Tr">
+                        <field name="NUM">200</field>
+                      </shadow>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </value>
+
+        <!-- Si OK: acheter selon la direction -->
+        <statement name="DO0">
+
+          <!-- Vérifier la direction CALL -->
+          <block type="controls_if" id="kTC3mVE5oXG7qZI9sbK@">
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+            <value name="IF0">
+              <block type="logic_compare" id="^LZn1^LZn1^LZn1^LZn1">
+                <field name="OP">EQ</field>
+                <value name="A">
+                  <block type="variables_get" id="pdRF@znbPD9xlZNB7vjX">
+                    <field name="VAR" id="S1S1S1S1S1S1S1S1S1S1">Trade Direction</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="text" id="W9e*mHuP2X!fAnIvQ3Y@">
+                    <field name="TEXT">CALL</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="purchase" id="%JWjw9ERer4*MZmz#HUh">
+                <field name="PURCHASE_LIST">CALL</field>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="purchase" id="T3V5X7Z9b@d$f^h*jBlD">
+                <field name="PURCHASE_LIST">PUT</field>
+              </block>
+            </statement>
+          </block>
+
+        </statement>
+
+        <!-- Sinon: Afficher raison de non-achat -->
+        <statement name="ELSE">
+          <block type="notify" id="$HTfr3^JVht5*LXjv7BN">
+            <field name="NOTIFICATION_TYPE">error</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <shadow type="text" id="RzPxNvLtJrHpFnDlBj*h">
+                <field name="TEXT">⛔ Bot en pause — Stop Loss ou cooldown actif</field>
+              </shadow>
+            </value>
+          </block>
+        </statement>
+
+      </block>
+    </statement>
+  </block>
+
+  <!-- ============================================================
+       BLOC AFTER PURCHASE: Gestion Martingale & Résultats
+       ============================================================ -->
+  <block type="after_purchase" id="!BKTclu3#DMVenw5%FOX" x="900" y="60">
+    <statement name="AFTERPURCHASE_STACK">
+
+      <!-- Mettre à jour le profit de session -->
+      <block type="math_change" id="0zyxwvutsrqponmlkjih">
+        <field name="VAR" id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</field>
+        <value name="DELTA">
+          <shadow type="math_number" id="^LZn1^LZn1^LZn1^LZn1">
+            <field name="NUM">1</field>
+          </shadow>
+          <block type="read_details" id="fJ5jN9nR$rV*vZDzdH3h">
+            <field name="DETAIL_INDEX">4</field>
+          </block>
+        </value>
+        <next>
+
+          <!-- Mettre à jour le profit total -->
+          <block type="math_change" id="Kl#VwFg7QrAb2Lm$WxGh">
+            <field name="VAR" id="59$*DHLPTXbfjnrvz37@">Total Profit</field>
+            <value name="DELTA">
+              <shadow type="math_number" id="nZL^1nZL^1nZL^1nZL^1">
+                <field name="NUM">1</field>
+              </shadow>
+              <block type="read_details" id="7$BHNTZflrx39^DJPVbh">
+                <field name="DETAIL_INDEX">4</field>
+              </block>
+            </value>
+            <next>
+
+              <!-- Vérifier: Victoire ou Défaite -->
+              <block type="controls_if" id="11111111111111111111">
+                <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+
+                <!-- Si VICTOIRE -->
+                <value name="IF0">
+                  <block type="contract_check_result" id="7$BHNTZflrx39^DJPVbh">
+                    <field name="CHECK_RESULT">win</field>
+                  </block>
+                </value>
+
+                <!-- Actions en cas de VICTOIRE -->
+                <statement name="DO0">
+
+                  <!-- Incrémenter wins -->
+                  <block type="math_change" id="DXr@Nh1DXr@Nh1DXr@Nh">
+                    <field name="VAR" id="ungZSLE^81ungZSLE^81">Win Count</field>
+                    <value name="DELTA">
+                      <shadow type="math_number" id="Ln^Z1Ln^Z1Ln^Z1Ln^Z1">
+                        <field name="NUM">1</field>
+                      </shadow>
+                    </value>
+                    <next>
+
+                      <!-- Réinitialiser: niveau Martingale → 0 -->
+                      <block type="variables_set" id="vpjdXRLF*@5ztnhbVPJD">
+                        <field name="VAR" id="tldVNF^7zrjbTLD$5xph">Martingale Level</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="6@&DINSXchmrw16@&DIN">
+                            <field name="NUM">0</field>
+                          </block>
+                        </value>
+                        <next>
+
+                          <!-- Réinitialiser: mise → mise initiale -->
+                          <block type="variables_set" id="vpjdXRLF*@5ztnhbVPJD">
+                            <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+                            <value name="VALUE">
+                              <block type="variables_get" id="8^ELSZgnu18^ELSZgnu1">
+                                <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Initial Stake</field>
+                              </block>
+                            </value>
+                            <next>
+
+                              <!-- Réinitialiser: loss streak → 0 -->
+                              <block type="variables_set" id="EZu^Sn8Lg1EZu^Sn8Lg1">
+                                <field name="VAR" id="mXI@whSD6rcN&1mXI@wh">Loss Streak</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="PvJpDj^d9X3RxLrFl*f@">
+                                    <field name="NUM">0</field>
+                                  </block>
+                                </value>
+                                <next>
+
+                                  <!-- Désactiver mode récupération -->
+                                  <block type="variables_set" id="6@&DINSXchmrw16@&DIN">
+                                    <field name="VAR" id="nZL^1nZL^1nZL^1nZL^1">Recovery Mode</field>
+                                    <value name="VALUE">
+                                      <block type="logic_boolean" id="zxvtrpnljhfdbZXVTRPN">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+
+                                      <!-- Notification victoire -->
+                                      <block type="notify" id="iP%vcJ8pWD2jQ^wdK9qX">
+                                        <field name="NOTIFICATION_TYPE">success</field>
+                                        <field name="NOTIFICATION_SOUND">silent</field>
+                                        <value name="MESSAGE">
+                                          <shadow type="text" id="47!$&BEHKNQTWZcfilor">
+                                            <field name="TEXT">✅ VICTOIRE! Mise réinitialisée à $0.5</field>
+                                          </shadow>
+                                        </value>
+                                        <next>
+
+                                          <!-- Vérifier Take Profit -->
+                                          <block type="controls_if" id="@DNXhr1@DNXhr1@DNXhr">
+                                            <value name="IF0">
+                                              <block type="logic_compare" id="Gd0FczEbyDaxCZwBYvAX">
+                                                <field name="OP">GTE</field>
+                                                <value name="A">
+                                                  <block type="variables_get" id="Z^nL1Z^nL1Z^nL1Z^nL1">
+                                                    <field name="VAR" id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</field>
+                                                  </block>
+                                                </value>
+                                                <value name="B">
+                                                  <block type="variables_get" id="47!$&BEHKNQTWZcfilor">
+                                                    <field name="VAR" id="obOB6tgTG@ylYL&3qdQD">Take Profit</field>
+                                                  </block>
+                                                </value>
+                                              </block>
+                                            </value>
+                                            <statement name="DO0">
+
+                                              <!-- Désactiver le bot: Take Profit atteint -->
+                                              <block type="variables_set" id="DXr@Nh1DXr@Nh1DXr@Nh">
+                                                <field name="VAR" id="$HTfr3^JVht5*LXjv7BN">Is Active</field>
+                                                <value name="VALUE">
+                                                  <block type="logic_boolean" id="ungZSLE^81ungZSLE^81">
+                                                    <field name="BOOL">FALSE</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="notify" id="mXI@whSD6rcN&1mXI@wh">
+                                                    <field name="NOTIFICATION_TYPE">success</field>
+                                                    <field name="NOTIFICATION_SOUND">silent</field>
+                                                    <value name="MESSAGE">
+                                                      <shadow type="text" id="8^ELSZgnu18^ELSZgnu1">
+                                                        <field name="TEXT">🎯 OBJECTIF ATTEINT! Profit: $50 — Bot arrêté</field>
+                                                      </shadow>
+                                                    </value>
+                                                  </block>
+                                                </next>
+                                              </block>
+
+                                            </statement>
+                                          </block>
+
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+
+                <!-- Actions en cas de DÉFAITE -->
+                <statement name="ELSE">
+
+                  <!-- Incrémenter losses -->
+                  <block type="math_change" id="&Ncr6DShw@IXm1&Ncr6D">
+                    <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Loss Count</field>
+                    <value name="DELTA">
+                      <shadow type="math_number" id="Gd0FczEbyDaxCZwBYvAX">
+                        <field name="NUM">1</field>
+                      </shadow>
+                    </value>
+                    <next>
+
+                      <!-- Incrémenter loss streak -->
+                      <block type="math_change" id="!BKTclu3#DMVenw5%FOX">
+                        <field name="VAR" id="mXI@whSD6rcN&1mXI@wh">Loss Streak</field>
+                        <value name="DELTA">
+                          <shadow type="math_number" id="ARiz&Pgx%Nev#Lct!Jar">
+                            <field name="NUM">1</field>
+                          </shadow>
+                        </value>
+                        <next>
+
+                          <!-- Activer mode récupération -->
+                          <block type="variables_set" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                            <field name="VAR" id="nZL^1nZL^1nZL^1nZL^1">Recovery Mode</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="fJ5jN9nR$rV*vZDzdH3h">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+
+                              <!-- Vérifier: level < max levels -->
+                              <block type="controls_if" id="gL8nS^uZE1gL8nS^uZE1">
+                                <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+                                <value name="IF0">
+                                  <block type="logic_compare" id="47!$&BEHKNQTWZcfilor">
+                                    <field name="OP">LT</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="W9e*mHuP2X!fAnIvQ3Y@">
+                                        <field name="VAR" id="tldVNF^7zrjbTLD$5xph">Martingale Level</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="math_number" id="tldVNF^7zrjbTLD$5xph">
+                                        <field name="NUM">5</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+
+                                <!-- Sous le max: appliquer Martingale -->
+                                <statement name="DO0">
+
+                                  <!-- Incrémenter niveau Martingale -->
+                                  <block type="math_change" id="ungZSLE^81ungZSLE^81">
+                                    <field name="VAR" id="tldVNF^7zrjbTLD$5xph">Martingale Level</field>
+                                    <value name="DELTA">
+                                      <shadow type="math_number" id="gL8nS^uZE1gL8nS^uZE1">
+                                        <field name="NUM">1</field>
+                                      </shadow>
+                                    </value>
+                                    <next>
+
+                                      <!-- Nouvelle mise = mise * multiplicateur -->
+                                      <block type="variables_set" id="0zyxwvutsrqponmlkjih">
+                                        <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+                                        <value name="VALUE">
+                                          <block type="math_arithmetic" id="^LZn1^LZn1^LZn1^LZn1">
+                                            <field name="OP">MULTIPLY</field>
+                                            <value name="A">
+                                              <shadow type="math_number" id="T3V5X7Z9b@d$f^h*jBlD">
+                                                <field name="NUM">1</field>
+                                              </shadow>
+                                              <block type="variables_get" id="W9e*mHuP2X!fAnIvQ3Y@">
+                                                <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+                                              </block>
+                                            </value>
+                                            <value name="B">
+                                              <shadow type="math_number" id="yvspmjgdaXUROLIFC*%@">
+                                                <field name="NUM">2.15</field>
+                                              </shadow>
+                                              <block type="variables_get" id="QxMtIpElAh%d!Z6V2RyN">
+                                                <field name="VAR" id="nZL^1nZL^1nZL^1nZL^1">Martingale Multiplier</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </value>
+                                        <next>
+
+                                          <!-- Cooldown après perte -->
+                                          <block type="variables_set" id="11111111111111111111">
+                                            <field name="VAR" id="rhXND@1rhXND@1rhXND@">Cooldown Counter</field>
+                                            <value name="VALUE">
+                                              <block type="math_number" id="Ln^Z1Ln^Z1Ln^Z1Ln^Z1">
+                                                <field name="NUM">2</field>
+                                              </block>
+                                            </value>
+                                            <next>
+
+                                              <!-- Notification perte avec Martingale -->
+                                              <block type="notify" id="obOB6tgTG@ylYL&3qdQD">
+                                                <field name="NOTIFICATION_TYPE">error</field>
+                                                <field name="NOTIFICATION_SOUND">silent</field>
+                                                <value name="MESSAGE">
+                                                  <shadow type="text" id="!BKTclu3#DMVenw5%FOX">
+                                                    <field name="TEXT">❌ Perte — Martingale activée. Prochaine mise augmentée</field>
+                                                  </shadow>
+                                                </value>
+                                              </block>
+
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
+
+                                <!-- Au max: réinitialiser complètement -->
+                                <statement name="ELSE">
+
+                                  <!-- Réinitialiser niveau -->
+                                  <block type="variables_set" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                                    <field name="VAR" id="tldVNF^7zrjbTLD$5xph">Martingale Level</field>
+                                    <value name="VALUE">
+                                      <block type="math_number" id="Ln^Z1Ln^Z1Ln^Z1Ln^Z1">
+                                        <field name="NUM">0</field>
+                                      </block>
+                                    </value>
+                                    <next>
+
+                                      <!-- Réinitialiser mise -->
+                                      <block type="variables_set" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                                        <field name="VAR" id="Kl#VwFg7QrAb2Lm$WxGh">Stake</field>
+                                        <value name="VALUE">
+                                          <block type="variables_get" id="NrDh@X1NrDh@X1NrDh@X">
+                                            <field name="VAR" id="pdRF@znbPD9xlZNB7vjX">Initial Stake</field>
+                                          </block>
+                                        </value>
+                                        <next>
+
+                                          <!-- Réinitialiser loss streak -->
+                                          <block type="variables_set" id="kTC3mVE5oXG7qZI9sbK@">
+                                            <field name="VAR" id="mXI@whSD6rcN&1mXI@wh">Loss Streak</field>
+                                            <value name="VALUE">
+                                              <block type="math_number" id="mXI@whSD6rcN&1mXI@wh">
+                                                <field name="NUM">0</field>
+                                              </block>
+                                            </value>
+                                            <next>
+
+                                              <!-- Vérifier si Stop Loss atteint -->
+                                              <block type="controls_if" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                                                <value name="IF0">
+                                                  <block type="logic_compare" id="W9e*mHuP2X!fAnIvQ3Y@">
+                                                    <field name="OP">LTE</field>
+                                                    <value name="A">
+                                                      <block type="variables_get" id="Kl#VwFg7QrAb2Lm$WxGh">
+                                                        <field name="VAR" id="BTl3DVn5FXp7HZr9Jbt@">Session Profit</field>
+                                                      </block>
+                                                    </value>
+                                                    <value name="B">
+                                                      <block type="math_arithmetic" id="eH2fI3gJ4hK5iL6jM7kN">
+                                                        <field name="OP">MULTIPLY</field>
+                                                        <value name="A">
+                                                          <shadow type="math_number" id="nZL^1nZL^1nZL^1nZL^1">
+                                                            <field name="NUM">-1</field>
+                                                          </shadow>
+                                                        </value>
+                                                        <value name="B">
+                                                          <shadow type="math_number" id="Y$kHwT8fCrO3a^mJyV!h">
+                                                            <field name="NUM">200</field>
+                                                          </shadow>
+                                                        </value>
+                                                      </block>
+                                                    </value>
+                                                  </block>
+                                                </value>
+                                                <statement name="DO0">
+
+                                                  <!-- Désactiver le bot: Stop Loss atteint -->
+                                                  <block type="variables_set" id="6@&DINSXchmrw16@&DIN">
+                                                    <field name="VAR" id="$HTfr3^JVht5*LXjv7BN">Is Active</field>
+                                                    <value name="VALUE">
+                                                      <block type="logic_boolean" id="fJ5jN9nR$rV*vZDzdH3h">
+                                                        <field name="BOOL">FALSE</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+                                                      <block type="notify" id="X@hDrN1X@hDrN1X@hDrN">
+                                                        <field name="NOTIFICATION_TYPE">error</field>
+                                                        <field name="NOTIFICATION_SOUND">silent</field>
+                                                        <value name="MESSAGE">
+                                                          <shadow type="text" id="tldVNF^7zrjbTLD$5xph">
+                                                            <field name="TEXT">🛑 STOP LOSS ATTEINT! Bot arrêté pour protéger le capital</field>
+                                                          </shadow>
+                                                        </value>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+
+                                                </statement>
+                                              </block>
+
+                                              <!-- Notification réinitialisation Martingale -->
+                                              <block type="notify" id="59$*DHLPTXbfjnrvz37@">
+                                                <field name="NOTIFICATION_TYPE">error</field>
+                                                <field name="NOTIFICATION_SOUND">silent</field>
+                                                <value name="MESSAGE">
+                                                  <shadow type="text" id="Jj9Rr*ZzHh7Pp^XxFf5N">
+                                                    <field name="TEXT">⚠️ Martingale MAX atteint (6 niveaux) — Réinitialisation</field>
+                                                  </shadow>
+                                                </value>
+                                              </block>
+
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
+
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+              </block>
+
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+
+</xml>
